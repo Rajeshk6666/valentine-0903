@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Date App 😌</title>
+    <style>
+      body {
+        font-family: "Poppins", Arial, sans-serif;
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #ff9de2, #ffc3a0, #c1f0f6);
+        background-size: 400% 400%;
+        animation: gradientBG 15s ease infinite;
+      }
+
+      @keyframes gradientBG {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .card {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        width: 400px;
+        text-align: center;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s;
+        position: relative;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+      }
+
+      button {
+        padding: 12px 25px;
+        margin: 10px;
+        font-size: 16px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+      button:hover {
+        transform: scale(1.1);
+      }
+
+      #yes {
+        background: #ff4081;
+        color: white;
+      }
+      #no {
+        background: #ff1744;
+        color: white;
+        position: relative;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .location,
+      .activity {
+        display: block;
+        width: 80%;
+        margin: 10px auto;
+        background: #6200ea;
+        color: white;
+      }
+
+      /* FULLSCREEN GIF */
+      .gif-overlay {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: 9999;
+        display: none;
+      }
+
+      /* SURPRISE PHOTO */
+      .surprise-photo {
+        width: 100%;
+        border-radius: 15px;
+        margin-top: 15px;
+      }
+
+      /* CORNER FUNNY GIF */
+      .corner-gif {
+        position: absolute;
+        top: -20px;
+        right: -20px;
+        width: 80px;
+        z-index: 10;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Fullscreen YES gif -->
+    <img id="hellGif" class="gif-overlay" src="hell-yeah.gif" alt="Hell Yeah" />
+
+    <!-- PAGE 1 -->
+    <div class="card" id="page1">
+      <h2>Will you go on a date with me? 💖</h2>
+      <button id="yes">Yes 😍</button>
+      <button id="no">No 🙄</button>
+      <p style="font-size: 12px; color: gray">Click once to enable sound 🔊</p>
+    </div>
+
+    <!-- PAGE 2 -->
+    <div class="card hidden" id="page2">
+      <h2>Choose your date location 🌸</h2>
+      <button class="location">Beach 🏖️</button>
+      <button class="location">Café ☕</button>
+      <button class="location">Park 🌳</button>
+      <button class="location">Rooftop 🌇</button>
+    </div>
+
+    <!-- PAGE 3 -->
+    <div class="card hidden" id="page3">
+      <h2>Choose your activity 🎉</h2>
+      <button class="activity">Dinner 🍽️</button>
+      <button class="activity">Movie 🎬</button>
+      <button class="activity">Coffee ☕</button>
+      <button class="activity" id="surpriseBtn">Surprise 😏</button>
+    </div>
+
+    <!-- PAGE 4 -->
+    <div class="card hidden" id="page4">
+      <h2>All set! 😘</h2>
+
+      <!-- Surprise content -->
+      <img
+        id="surprisePhoto"
+        class="surprise-photo hidden"
+        src="suprices.jpg"
+        alt="Funny You"
+      />
+      <img
+        id="cornerGif"
+        class="corner-gif hidden"
+        src="dog-side-eye.gif"
+        alt="Funny GIF"
+      />
+
+      <p>You're going to have a cute & fun date! 🥰💖</p>
+      <button onclick="resetApp()">Book another date 😉</button>
+    </div>
+
+    <!-- AUDIO -->
+    <audio id="sound" src="faaah.mp3" preload="auto"></audio>
+    <audio id="yesSound" src="hell_yeah.mp3" preload="auto"></audio>
+
+    <script>
+      const sound = document.getElementById("sound");
+      const yesSound = document.getElementById("yesSound");
+      const hellGif = document.getElementById("hellGif");
+
+      const noBtn = document.getElementById("no");
+      const yesBtn = document.getElementById("yes");
+
+      const page1 = document.getElementById("page1");
+      const page2 = document.getElementById("page2");
+      const page3 = document.getElementById("page3");
+      const page4 = document.getElementById("page4");
+
+      const surpriseBtn = document.getElementById("surpriseBtn");
+      const surprisePhoto = document.getElementById("surprisePhoto");
+      const cornerGif = document.getElementById("cornerGif");
+
+      let audioUnlocked = false;
+
+      // unlock audio
+      document.addEventListener(
+        "click",
+        () => {
+          if (!audioUnlocked) {
+            sound
+              .play()
+              .then(() => {
+                sound.pause();
+                sound.currentTime = 0;
+                audioUnlocked = true;
+              })
+              .catch(() => {});
+          }
+        },
+        { once: true },
+      );
+
+      // NO hover
+      noBtn.addEventListener("mouseenter", () => {
+        noBtn.style.transform = `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px)`;
+        if (audioUnlocked) {
+          sound.currentTime = 0;
+          sound.play();
+        }
+      });
+
+      // YES click
+      yesBtn.addEventListener("click", () => {
+        if (audioUnlocked) yesSound.play();
+        hellGif.style.display = "block";
+
+        setTimeout(() => (hellGif.style.display = "none"), 10000);
+
+        page1.classList.add("hidden");
+        page2.classList.remove("hidden");
+      });
+
+      // Location → Activity
+      document.querySelectorAll(".location").forEach((btn) => {
+        btn.onclick = () => {
+          page2.classList.add("hidden");
+          page3.classList.remove("hidden");
+        };
+      });
+
+      // Normal activities
+      document.querySelectorAll(".activity").forEach((btn) => {
+        btn.onclick = () => {
+          page3.classList.add("hidden");
+          page4.classList.remove("hidden");
+        };
+      });
+
+      // Surprise special behavior
+      surpriseBtn.onclick = () => {
+        page3.classList.add("hidden");
+        page4.classList.remove("hidden");
+
+        surprisePhoto.classList.remove("hidden");
+        cornerGif.classList.remove("hidden");
+      };
+
+      // Reset
+      function resetApp() {
+        page4.classList.add("hidden");
+        page1.classList.remove("hidden");
+        surprisePhoto.classList.add("hidden");
+        cornerGif.classList.add("hidden");
+      }
+    </script>
+  </body>
+</html>

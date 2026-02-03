@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Date App 😌</title>
+
+    <style>
+      body {
+        font-family: "Poppins", Arial, sans-serif;
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+
+        background: linear-gradient(135deg, #ffdde1, #ee9ca7, #c2e9fb, #fcb69f);
+        background-size: 500% 500%;
+        animation: gradientBG 18s ease infinite;
+      }
+
+      @keyframes gradientBG {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .card {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        width: 400px;
+        text-align: center;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+        position: relative;
+        animation: pop 0.35s ease;
+      }
+
+      @keyframes pop {
+        from {
+          transform: scale(0.95);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      button {
+        padding: 12px 25px;
+        margin: 10px;
+        font-size: 16px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      button:hover {
+        transform: scale(1.1);
+      }
+
+      #yes {
+        background: #ff4081;
+        color: white;
+        font-size: 18px;
+        padding: 15px 34px;
+      }
+
+      #no {
+        background: #ff1744;
+        color: white;
+        position: relative;
+      }
+
+      .location,
+      .activity {
+        display: block;
+        width: 80%;
+        margin: 10px auto;
+        background: #7b2cff;
+        color: white;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .gif-overlay {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: 9999;
+        display: none;
+      }
+
+      .surprise-photo {
+        width: 100%;
+        border-radius: 15px;
+        margin: 15px 0;
+      }
+
+      .corner-gif {
+        position: absolute;
+        top: -15px;
+        right: -15px;
+        width: 90px;
+      }
+
+      .reset-btn {
+        margin-top: 25px;
+        background: #ff4081;
+        color: white;
+        font-weight: 600;
+      }
+
+      .reset-btn:hover {
+        background: #e91e63;
+      }
+    </style>
+  </head>
+
+  <body>
+    <img id="hellGif" class="gif-overlay" src="kbc-adbhut.gif" alt="YES GIF" />
+
+    <!-- PAGE 1 -->
+    <div class="card" id="page1">
+      <h2>Will you go on a date with me? 💖</h2>
+      <button id="yes">Yes 😍</button>
+      <button id="no">No 🙄</button>
+      <p style="font-size: 12px; color: gray">Click once to enable sound 🔊</p>
+    </div>
+
+    <!-- PAGE 2 -->
+    <div class="card hidden" id="page2">
+      <h2>Choose your date location 🌸</h2>
+      <button class="location">Beach 🏖️</button>
+      <button class="location">Café ☕</button>
+      <button class="location">Park 🌳</button>
+      <button class="location">Rooftop 🌇</button>
+    </div>
+
+    <!-- PAGE 3 -->
+    <div class="card hidden" id="page3">
+      <h2>Choose your activity 🎉</h2>
+      <button class="activity">Dinner 🍽️</button>
+      <button class="activity">Movie 🎬</button>
+      <button class="activity">Coffee ☕</button>
+      <button class="activity" id="surpriseBtn">Surprise 😏</button>
+    </div>
+
+    <!-- PAGE 4 -->
+    <div class="card hidden" id="page4">
+      <h2>All set! 😘</h2>
+
+      <img
+        id="surprisePhoto"
+        class="surprise-photo hidden"
+        src="suprices.jpg"
+      />
+      <img id="cornerGif" class="corner-gif hidden" src="dog-side-eye.gif" />
+
+      <p>You're going to have a cute & fun date! 🥰💖</p>
+      <button class="reset-btn" onclick="resetApp()">
+        Book another date 😉
+      </button>
+    </div>
+
+    <!-- AUDIO FILES -->
+    <audio id="noSound" src="faaah.mp3" preload="auto"></audio>
+    <audio id="yesSound" src="kbc-right-answer-new.mp3" preload="auto"></audio>
+    <audio id="rizzSound" src="rizz-sound-effect.mp3" preload="auto"></audio>
+    <audio id="frogLaugh" src="frog-laughing-meme.mp3" preload="auto"></audio>
+
+    <script>
+      const noBtn = document.getElementById("no");
+      const yesBtn = document.getElementById("yes");
+
+      const noSound = document.getElementById("noSound");
+      const yesSound = document.getElementById("yesSound");
+      const rizzSound = document.getElementById("rizzSound");
+      const frogLaugh = document.getElementById("frogLaugh");
+
+      const hellGif = document.getElementById("hellGif");
+
+      const page1 = document.getElementById("page1");
+      const page2 = document.getElementById("page2");
+      const page3 = document.getElementById("page3");
+      const page4 = document.getElementById("page4");
+
+      const surpriseBtn = document.getElementById("surpriseBtn");
+      const surprisePhoto = document.getElementById("surprisePhoto");
+      const cornerGif = document.getElementById("cornerGif");
+
+      let audioUnlocked = false;
+
+      // Unlock audio on first click (page 1 sounds)
+      document.addEventListener(
+        "click",
+        () => {
+          if (!audioUnlocked) {
+            noSound
+              .play()
+              .then(() => {
+                noSound.pause();
+                noSound.currentTime = 0;
+                audioUnlocked = true;
+              })
+              .catch(() => {});
+          }
+        },
+        { once: true },
+      );
+
+      // No button dodges and plays sound
+      noBtn.addEventListener("mouseenter", () => {
+        noBtn.style.transform = `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px)`;
+        if (audioUnlocked) {
+          noSound.currentTime = 0;
+          noSound.play();
+        }
+      });
+
+      // Yes button click: show GIF and play KBC sound
+      yesBtn.addEventListener("click", () => {
+        if (audioUnlocked) {
+          yesSound.currentTime = 0;
+          yesSound.play();
+        }
+
+        hellGif.style.display = "block";
+        setTimeout(() => {
+          hellGif.style.display = "none";
+        }, 8000);
+
+        page1.classList.add("hidden");
+        page2.classList.remove("hidden");
+      });
+
+      // Play rizz sound if unlocked
+      function playRizz() {
+        if (audioUnlocked) {
+          rizzSound.currentTime = 0;
+          rizzSound.play();
+        }
+      }
+
+      // Add rizz hover to all buttons on pages 2, 3, 4
+      [page2, page3, page4].forEach((page) => {
+        page.querySelectorAll("button").forEach((btn) => {
+          btn.addEventListener("mouseenter", () => {
+            playRizz();
+          });
+        });
+      });
+
+      // Page 2: location selection
+      document.querySelectorAll(".location").forEach((btn) => {
+        btn.onclick = () => {
+          page2.classList.add("hidden");
+          page3.classList.remove("hidden");
+        };
+      });
+
+      // Page 3: activity selection
+      document.querySelectorAll(".activity").forEach((btn) => {
+        btn.onclick = (e) => {
+          // Only change page for non-surprise buttons
+          if (e.target.id !== "surpriseBtn") {
+            page3.classList.add("hidden");
+            page4.classList.remove("hidden");
+          }
+        };
+      });
+
+      // Surprise button: show photo + corner gif + frog laugh + custom text
+      surpriseBtn.onclick = () => {
+        page3.classList.add("hidden");
+        page4.classList.remove("hidden");
+
+        surprisePhoto.classList.remove("hidden");
+        cornerGif.classList.remove("hidden");
+
+        // Change the text only for surprise
+        const page4Text = page4.querySelector("p");
+        page4Text.textContent = "Sorry melroy I had to!!! 😉";
+
+        frogLaugh.currentTime = 0;
+        frogLaugh.play();
+      };
+
+      // Reset button
+      document.querySelector(".reset-btn").addEventListener("click", () => {
+        resetApp();
+      });
+
+      function resetApp() {
+        location.reload();
+      }
+    </script>
+  </body>
+</html>
